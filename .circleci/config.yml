@@ -135,40 +135,6 @@ pytorch_linux_build_defaults: &pytorch_linux_build_defaults
   - run:
       <<: *install_official_git_client
   - checkout
-  - run:
-      <<: *merge_pull_request_onto_master
-  - run:
-      <<: *setup_ci_environment
-  - run:
-      name: Build
-      no_output_timeout: "1h"
-      command: |
-        set -e
-        # Pull Docker image and run build
-        echo "DOCKER_IMAGE: "${DOCKER_IMAGE}
-        docker pull ${DOCKER_IMAGE}
-        export id=$(docker run -t -d -w /var/lib/jenkins ${DOCKER_IMAGE})
-
-        git submodule sync && git submodule update --init
-
-        docker cp /home/circleci/project/. $id:/var/lib/jenkins/workspace
-
-        ((echo "export JOB_BASE_NAME=${JOB_BASE_NAME}" && echo "source ./workspace/env" && echo 'sudo chown -R jenkins workspace && cd workspace && .jenkins/pytorch/build.sh') | docker exec -u jenkins -i "$id" bash) 2>&1 | ts
-
-        # Push intermediate Docker image and save COMMIT_DOCKER_IMAGE for next phase to use
-        mkdir -p /home/circleci/project/pytorch-ci-env
-        touch /home/circleci/project/pytorch-ci-env/.tmp  # Dummy file so that the persist_to_workspace step won't complain about not finding any file
-
-        if [ -z "${BUILD_ONLY}" ]; then
-          export COMMIT_DOCKER_IMAGE=${DOCKER_IMAGE}-${CIRCLE_SHA1}
-          docker commit "$id" ${COMMIT_DOCKER_IMAGE}
-          docker push ${COMMIT_DOCKER_IMAGE}
-          echo "declare -x COMMIT_DOCKER_IMAGE=${COMMIT_DOCKER_IMAGE}" > /home/circleci/project/pytorch-ci-env/COMMIT_DOCKER_IMAGE
-        fi
-  - persist_to_workspace:
-      root: /home/circleci/project/pytorch-ci-env
-      paths:
-        - "*"
 
 pytorch_linux_test_defaults: &pytorch_linux_test_defaults
   machine:
