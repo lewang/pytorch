@@ -890,3 +890,4 @@ workflows:
           requires:
             - pytorch_linux_xenial_cuda8_cudnn6_py3_build
       - pytorch_linux_trusty_py2_7_9_build_test
+      - caffe2_py2_cuda9_0_cudnn7_centos7_build
