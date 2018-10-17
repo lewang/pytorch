@@ -171,7 +171,7 @@ pytorch_linux_test_defaults: &pytorch_linux_test_defaults
 caffe2_linux_build_defaults: &caffe2_linux_build_defaults
   resource_class: large
   machine:
-    image: default
+    image: circleci/classic:201808-01
   steps:
   - run:
       <<: *install_official_git_client
