@@ -889,3 +889,4 @@ workflows:
       - pytorch_linux_xenial_cuda8_cudnn6_py3_test:
           requires:
             - pytorch_linux_xenial_cuda8_cudnn6_py3_build
+      - pytorch_linux_trusty_py2_7_9_build_test
